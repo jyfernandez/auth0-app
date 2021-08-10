@@ -1,0 +1,9 @@
+{
+  "domain": "tarsier-dev.us.auth0.com",
+  "clientID": "PcOI5TEuRHNOwumY3pGH3iOfi7x5PHeT",
+  "audience": "https://tarsier-dev.us.auth0.com/userinfo",
+  "scope": "openid profile email address phone",
+  "responseType": "token id_token",
+  "redirectUri": "http://localhost:3000",
+  "realm": "Username-Password-Authentication"
+}

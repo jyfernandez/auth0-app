@@ -13,7 +13,7 @@
   }
 }
 
-.App-header {
+.App-form {
   background-color: #282c34;
   min-height: 100vh;
   display: flex;
@@ -23,7 +23,11 @@
   font-size: calc(10px + 2vmin);
   color: white;
 }
-
+.results {
+  word-wrap: break-word;
+  width: 80%;
+  font-size: smaller;
+}
 .App-link {
   color: #61dafb;
 }
