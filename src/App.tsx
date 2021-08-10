@@ -2,10 +2,10 @@ import React from "react";
 import "./App.css";
 import * as auth0 from "auth0-js";
 import params from "./auth0-param.json";
+import { Result, Form, Input, Button, Typography, notification } from "antd";
+const { Paragraph, Text } = Typography;
 
 function App() {
-  const [username, setUsername] = React.useState("");
-  const [password, setPassword] = React.useState("");
   const [response, setResponse] = React.useState();
 
   const webAuth = new auth0.WebAuth({
@@ -17,8 +17,8 @@ function App() {
     responseType: params.responseType,
   });
 
-  const submitForm = (e: any) => {
-    e.preventDefault();
+  const submitForm = (values: any) => {
+    const { username, password } = values;
     webAuth.client.login(
       {
         realm: params.realm,
@@ -27,53 +27,91 @@ function App() {
       },
       (err, authResult) => {
         if (err) {
-          alert(err.description);
+          notification["error"]({
+            message: "Login Error",
+            description: err.description,
+          });
           return;
         }
         if (authResult) {
-          console.log(authResult);
+          notification["success"]({
+            message: "Login Success",
+            description: "Successfully Login",
+          });
           setResponse(authResult);
-          // window.origin = window.location.origin;
         }
       }
     );
   };
+  const onFinish = (values: any) => {
+    submitForm(values);
+  };
+
+  const onFinishFailed = (errorInfo: any) => {
+    console.log("Failed:", errorInfo);
+  };
   return (
     <div className="App">
       {response ? (
-        <div className="App-form">
-          <p className="results">Access Token: {response!["accessToken"]}</p>
-          <p className="results">Expires in: {response!["expiresIn"]}</p>
-          <p className="results">ID Token: {response!["idToken"]}</p>
-          <p className="results">Scope: {response!["scope"]}</p>
-          <p className="results">Token Type: {response!["tokenType"]}</p>
-        </div>
+        <Result
+          status="success"
+          title="Successfully Login!"
+          subTitle="You have successfully login to Auth0. Here's the details of the response."
+        >
+          <div className="desc">
+            <Paragraph>
+              <Text
+                strong
+                style={{
+                  fontSize: 20,
+                }}
+              >
+                Response:
+              </Text>
+            </Paragraph>
+            <Paragraph>Access Token: {response!["accessToken"]}</Paragraph>
+            <Paragraph>Expires in: {response!["expiresIn"]}</Paragraph>
+            <Paragraph>ID Token: {response!["idToken"]}</Paragraph>
+            <Paragraph>Scope: {response!["scope"]}</Paragraph>
+            <Paragraph>Token Type: {response!["tokenType"]}</Paragraph>
+          </div>
+        </Result>
       ) : (
-        <form className="App-form" onSubmit={submitForm}>
-          <label>
-            <b>Username</b>
-          </label>
-          <input
-            type="text"
-            placeholder="Enter username"
-            name="username"
-            required
-            onChange={(e) => setUsername(e.target.value)}
-          />
+        <div className="App-form">
+          <Form
+            name="basic"
+            labelCol={{ span: 8 }}
+            wrapperCol={{ span: 16 }}
+            onFinish={onFinish}
+            onFinishFailed={onFinishFailed}
+          >
+            <Form.Item
+              label="Username"
+              name="username"
+              rules={[
+                { required: true, message: "Please input your username!" },
+              ]}
+            >
+              <Input />
+            </Form.Item>
 
-          <label>
-            <b>Password</b>
-          </label>
-          <input
-            type="password"
-            placeholder="Enter Password"
-            name="password"
-            required
-            onChange={(e) => setPassword(e.target.value)}
-          />
+            <Form.Item
+              label="Password"
+              name="password"
+              rules={[
+                { required: true, message: "Please input your password!" },
+              ]}
+            >
+              <Input.Password />
+            </Form.Item>
 
-          <button type="submit">Login</button>
-        </form>
+            <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+              <Button type="primary" htmlType="submit">
+                Submit
+              </Button>
+            </Form.Item>
+          </Form>
+        </div>
       )}
     </div>
   );
