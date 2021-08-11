@@ -27,6 +27,7 @@ function App() {
       },
       (err, authResult) => {
         if (err) {
+          console.log(err);
           notification["error"]({
             message: "Login Error",
             description: err.description,
